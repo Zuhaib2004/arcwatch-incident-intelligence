@@ -2,7 +2,7 @@
 
 Arcwatch is an evidence-driven incident investigation platform for cloud and distributed systems. It correlates telemetry, deployment changes, and configuration evidence to rank likely root causes, recommend a remediation, and keep consequential actions behind explicit human approval.
 
-**Live demo:** [arcwatch-incident-command.zilyas53.chatgpt.site](https://arcwatch-incident-command.zilyas53.chatgpt.site)
+**Live demo:** [zuhaib2004.github.io/arcwatch-incident-intelligence](https://zuhaib2004.github.io/arcwatch-incident-intelligence/)
 
 > Current stage: interactive product prototype. The interface and controlled replay workflow are functional; live telemetry collectors and the production investigation backend are the next implementation phase.
 
