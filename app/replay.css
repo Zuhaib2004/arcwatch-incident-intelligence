@@ -1,0 +1,30 @@
+.modal-backdrop {
+  position: fixed; inset: 0; z-index: 30; background: #0d1712b8;
+  backdrop-filter: blur(4px); display: grid; place-items: center; padding: 20px;
+}
+.replay-modal {
+  width: min(530px, 100%); position: relative; background: #fbfcfa;
+  border: 1px solid #d6ded8; border-radius: 15px; padding: 27px;
+  box-shadow: 0 24px 80px #07100b66;
+}
+.modal-close { position: absolute; right: 17px; top: 14px; border: 0; background: transparent; color: #768079; font-size: 22px; }
+.replay-modal h2 { font: 26px Georgia, serif; margin: 5px 0 8px; }
+.modal-intro { color: #68736c; font-size: 11px; line-height: 1.55; margin: 0 0 17px; }
+.scenario-meta { display: flex; gap: 7px; margin-bottom: 20px; }
+.scenario-meta span { flex: 1; padding: 9px; background: #eff3ef; border-radius: 7px; color: #6a756e; font-size: 9px; }
+.scenario-meta b { display: block; color: #23342c; font-size: 12px; margin-bottom: 2px; }
+.replay-steps { display: grid; gap: 7px; }
+.replay-steps > div { display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: center; padding: 10px; border: 1px solid #e1e6e2; border-radius: 8px; color: #758078; }
+.replay-steps i { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #edf0ed; font-style: normal; font-size: 9px; }
+.replay-steps span { font-size: 10px; font-weight: 600; }
+.replay-steps small { font-size: 8px; }
+.replay-steps .running { border-color: #8eb5a1; background: #eef6f1; color: #275641; }
+.replay-steps .running i { animation: pulse 1s infinite; background: #cee5d7; }
+.replay-steps .done { color: #326149; }
+.replay-steps .done i { background: #d9ebdf; }
+.launch-button { width: 100%; margin-top: 18px; border: 0; border-radius: 8px; background: #225a46; color: white; padding: 11px; font-size: 10px; font-weight: 700; }
+.launch-button:disabled { opacity: .5; }
+.replay-result { margin-top: 18px; padding: 12px; background: #e2f1e7; color: #23553f; border-radius: 8px; display: grid; gap: 4px; }
+.replay-result strong { font-size: 11px; }
+.replay-result span { font-size: 9px; }
+@keyframes pulse { 50% { box-shadow: 0 0 0 5px #7cb4942b; } }
