@@ -1,100 +1,127 @@
-# vinext-starter
+# Arcwatch Incident Intelligence
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+Arcwatch is an evidence-driven incident investigation platform for cloud and distributed systems. It correlates telemetry, deployment changes, and configuration evidence to rank likely root causes, recommend a remediation, and keep consequential actions behind explicit human approval.
 
-## Prerequisites
+**Live demo:** [arcwatch-incident-command.zilyas53.chatgpt.site](https://arcwatch-incident-command.zilyas53.chatgpt.site)
 
-- Node.js `>=22.13.0`
+> Current stage: interactive product prototype. The interface and controlled replay workflow are functional; live telemetry collectors and the production investigation backend are the next implementation phase.
 
-## Quick Start
+## Why this project exists
+
+Production incidents rarely present one clean signal. Responders move between metrics, traces, logs, deployment history, and infrastructure state while an outage is unfolding. Arcwatch explores a safer incident-intelligence workflow built around:
+
+- evidence before conclusions;
+- calibrated root-cause rankings instead of unsupported answers;
+- reproducible incident replays;
+- human approval before remediation;
+- post-action verification and measurable evaluation.
+
+## Current capabilities
+
+- Incident command center with active severity and service context
+- Evidence timeline spanning Prometheus, OpenTelemetry, GitHub, and Kubernetes signals
+- Ranked root-cause hypothesis with confidence and supporting reasoning
+- Approval-gated rollback recommendation
+- Interactive connection-pool exhaustion replay
+- Replay metrics for diagnosis latency, ranking quality, and unsafe actions
+- Responsive interface for desktop and mobile
+- Automated production-build and server-rendering checks
+
+## System direction
+
+```text
+Demo microservices
+       │
+       ├── OpenTelemetry traces
+       ├── Prometheus metrics
+       ├── application logs
+       └── deployment/configuration events
+                    │
+                    ▼
+          Evidence normalization layer
+                    │
+                    ▼
+        Correlation + diagnosis engine
+                    │
+             ┌──────┴──────┐
+             ▼             ▼
+      Evidence timeline   Evaluation harness
+             │
+             ▼
+     Approval policy engine
+             │
+             ▼
+     Restricted remediation
+             │
+             ▼
+       Outcome verification
+```
+
+## Evaluation plan
+
+The finished system will be tested against reproducible failure scenarios rather than judged only by a polished demonstration.
+
+| Metric | Purpose |
+|---|---|
+| Root-cause top-1/top-3 accuracy | Measures diagnosis ranking quality |
+| Mean time to diagnosis | Measures operational usefulness |
+| Evidence citation accuracy | Verifies claims are supported by collected signals |
+| Unsafe-action rate | Measures remediation policy effectiveness |
+| Recovery verification rate | Confirms an approved action actually restored service |
+| Cost and latency per investigation | Measures production feasibility |
+
+Planned scenarios include connection-pool exhaustion, expired credentials, queue backlogs, bad deployments, dependency timeouts, memory leaks, rate limiting, and configuration drift.
+
+## Roadmap
+
+- [x] Build the incident command-center experience
+- [x] Add approval-gated remediation interaction
+- [x] Add a controlled incident replay workflow
+- [x] Deploy the interactive prototype
+- [ ] Create containerized demo microservices
+- [ ] Instrument services with OpenTelemetry
+- [ ] Add Prometheus metric collection
+- [ ] Persist incidents and evidence in PostgreSQL
+- [ ] Build evidence normalization and correlation services
+- [ ] Add reproducible failure injection
+- [ ] Implement evaluation datasets and scoring
+- [ ] Add post-remediation verification
+- [ ] Provision cloud infrastructure with Terraform
+
+## Local development
+
+Requirements: Node.js 22.13 or newer.
 
 ```bash
 npm install
 npm run dev
+```
+
+Open `http://localhost:3000`.
+
+Validate a production build and rendered output:
+
+```bash
 npm run build
+node --test tests/rendered-html.test.mjs
 ```
 
-This starter does not use `wrangler.jsonc`.
+## Technology
 
-## Included Shape
+- TypeScript and React
+- vinext and Vite
+- Cloudflare-compatible deployment output
+- Node test runner
+- Planned: Python, FastAPI, PostgreSQL, OpenTelemetry, Prometheus, Docker, Terraform, and AWS
 
-- edit site code under `app/`
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
+## Engineering principles
 
-## Workspace Auth Headers
+1. Every diagnosis must reference observable evidence.
+2. Confidence must be evaluated, not presented decoratively.
+3. High-impact actions require approval and a restricted execution policy.
+4. Remediation is incomplete until recovery is verified.
+5. Customer-specific integrations should become reusable connectors and playbooks.
 
-Signed-in visitors receive both `oai-authenticated-user-id` and `oai-authenticated-user-email`. Private Sites require every visitor to sign in; public Sites may also have anonymous visitors, for whom neither header is present.
+## Project status
 
-The user ID is stable for the same user on the same Site and different across Sites. Email and name are intended for display or contact purposes.
-
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
-
-Treat the full name as optional and fall back to email when it is absent:
-
-```tsx
-import { headers } from "next/headers";
-
-export default async function Home() {
-  const requestHeaders = await headers();
-  const userId = requestHeaders.get("oai-authenticated-user-id");
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
-
-  const displayName = fullName ?? email;
-  // ...
-}
-```
-
-## Optional Dispatch-Owned ChatGPT Sign-In
-
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
-
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
-
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
-
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
-
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
-
-## Useful Commands
-
-- `npm run dev`: start local development
-- `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
-- `npm run db:generate`: generate Drizzle migrations after schema changes
-
-## Learn More
-
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+This repository documents the project incrementally. Issues and milestones will track the transition from an interactive prototype to a working distributed-systems investigation platform.
